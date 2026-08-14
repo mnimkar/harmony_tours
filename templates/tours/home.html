@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="slider">
+  {% if banners %}
+    {% for b in banners %}
+      <div class="slide{% if forloop.first %} active{% endif %}">
+        {% if b.link %}<a href="{{ b.link }}">{% endif %}
+        <img src="{{ b.image.url }}" alt="{{ b.title }}">
+        {% if b.link %}</a>{% endif %}
+      </div>
+    {% endfor %}
+  {% else %}
+    {% load static %}
+    <div class="slide active"><img src="{% static 'img/banner-republic.jpg' %}" alt="Welcome"></div>
+  {% endif %}
+</section>
+
+<section class="planning wrap">
+  <a href="{% url 'tours:category' 'honeymoon-tours' %}">
+    <span class="icon">♥</span>
+    <span>Honeymoon Tours</span>
+  </a>
+  <a href="{% url 'tours:category' 'individual-domestic' %}">
+    <span class="icon">⌂</span>
+    <span>Domestic Tours</span>
+  </a>
+  <a href="{% url 'tours:category' 'individual-international' %}">
+    <span class="icon">✈</span>
+    <span>International Tours</span>
+  </a>
+  <a href="{% url 'tours:category' 'off-beat-tours' %}">
+    <span class="icon">⚑</span>
+    <span>Off Beat Tours</span>
+  </a>
+</section>
+
+<section class="welcome wrap">
+  <div class="line"></div>
+  <h1>Welcome to Travellers Harmony!</h1>
+  <div class="line"></div>
+</section>
+
+<section class="wrap block">
+  <h2 class="upper">Available Tours</h2>
+  <div class="tour-grid">
+    {% for tour in featured_tours %}
+      <article class="tour-card">
+        <a href="{{ tour.get_absolute_url }}">
+          {% if tour.image %}
+            <img src="{{ tour.image.url }}" alt="{{ tour.title }}">
+          {% endif %}
+          <h3>{{ tour.title }}</h3>
+        </a>
+        <p>{{ tour.short_description }} <a class="arrow" href="{{ tour.get_absolute_url }}">Read more...</a></p>
+      </article>
+    {% empty %}
+      <p>Tours will appear here once they are added in Admin.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<script>
+  (function () {
+    var slides = document.querySelectorAll('.slider .slide');
+    if (slides.length < 2) return;
+    var i = 0;
+    setInterval(function () {
+      slides[i].classList.remove('active');
+      i = (i + 1) % slides.length;
+      slides[i].classList.add('active');
+    }, 4500);
+  })();
+</script>
+<section class="wrap news">
+  <div>
+    <h2>Educational Tours</h2>
+    <p>It takes us immense pleasure to introduce our separate wing. We specialize in Educational excursion for school kids and Industrial Visit for college students, Social Tours, Jungle Camps. With 24 x 7 Travel Assistance, continuous research and improvement in processes of our dedicated and experienced team help us to design exclusive tailor made packages with the client’s view-point of perfect holiday. <a href="{% url 'tours:educational' %}">Read more...</a></p>
+    <h2>Inspirational Tourism</h2>
+    <p>This novel concept of Inspirational tourism gives never-before dimensions to the world of travel which includes programmes, events, and activities that enable all population to enjoy tourism, while also attending to the quality of relations between visitors and host communities. <a href="{% url 'tours:inspirational' %}">Read more...</a></p>
+  </div>
+  <div>
+    <h2>Latest Excursion</h2>
+    {% for tour in latest_excursions %}
+      <article class="excursion">
+        <a href="{{ tour.get_absolute_url }}">
+          {% if tour.image %}<img src="{{ tour.image.url }}" alt="{{ tour.title }}">{% endif %}
+          <h3>{{ tour.title }}</h3>
+        </a>
+      </article>
+    {% empty %}
+      <p>No latest excursion yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

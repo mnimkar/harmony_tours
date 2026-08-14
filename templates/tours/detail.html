@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}{{ tour.title }}{% endblock %}
+{% block content %}
+<div class="page wrap detail-page">
+  <p class="crumb">
+    <a href="{% url 'tours:home' %}">Home</a> /
+    {{ tour.category.get_kind_display }} /
+    <a href="{{ tour.category.get_absolute_url }}">{{ tour.category.name }}</a>
+  </p>
+  <h1>{{ tour.title }}</h1>
+  {% if tour.image %}
+    <img class="hero" src="{{ tour.image.url }}" alt="{{ tour.title }}">
+  {% endif %}
+
+  <div class="detail-layout">
+    <div>
+      <div class="tabs">
+        <details open>
+          <summary>Itinerary</summary>
+          <div class="tab-body">
+            {% if tour.itinerary %}{{ tour.itinerary|safe }}{% else %}<p>Contact us for the detailed itinerary.</p>{% endif %}
+            {% if tour.notes %}<p><em>{{ tour.notes }}</em></p>{% endif %}
+          </div>
+        </details>
+        <details>
+          <summary>Tour Dates</summary>
+          <div class="tab-body">
+            {% if dates %}
+              <ul class="dates">
+                {% for d in dates %}
+                  <li>
+                    <strong>{{ d.start_date|date:"d M Y" }}</strong>
+                    {% if d.end_date %} – {{ d.end_date|date:"d M Y" }}{% endif %}
+                    {% if d.price %} · ₹{{ d.price }}{% endif %}
+                    {% if d.seats %} · {{ d.seats }} seats{% endif %}
+                    {% if d.notes %} · {{ d.notes }}{% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p>Dates will be announced. Please enquire and we will share the next departures.</p>
+            {% endif %}
+          </div>
+        </details>
+        <details>
+          <summary>Tour Cost Includes</summary>
+          <div class="tab-body">{% if tour.cost_includes %}{{ tour.cost_includes|safe }}{% else %}<p>Please contact us for inclusions.</p>{% endif %}</div>
+        </details>
+        <details>
+          <summary>Tour Cost Excludes</summary>
+          <div class="tab-body">{% if tour.cost_excludes %}{{ tour.cost_excludes|safe }}{% else %}<p>Please contact us for exclusions.</p>{% endif %}</div>
+        </details>
+        <details>
+          <summary>Offers</summary>
+          <div class="tab-body">{% if tour.offers %}{{ tour.offers|safe }}{% else %}<p>Ask us about current offers and group discounts.</p>{% endif %}</div>
+        </details>
+      </div>
+    </div>
+
+    <aside>
+      <h2>{{ tour.category.get_kind_display }}</h2>
+      <ul>
+        {% for s in siblings %}
+          <li><a href="{{ s.get_absolute_url }}">{{ s.name }}</a></li>
+        {% endfor %}
+      </ul>
+      <h2>{{ tour.category.get_kind_display }} / {{ tour.title }}</h2>
+      <form method="post" class="enquiry-form">
+        {% csrf_token %}
+        {{ form.name }}
+        {{ form.email }}
+        {{ form.mobile }}
+        {{ form.city }}
+        <label>No of Adults {{ form.adults }}</label>
+        <label>Children 5-12 yrs {{ form.children_5_12 }}</label>
+        <label>Children below 5 yrs {{ form.children_below_5 }}</label>
+        <label>Date of travel {{ form.travel_date }}</label>
+        {{ form.message }}
+        <button type="submit">Enquiry</button>
+      </form>
+      <div class="assist">
+        <h2>Required Assistance?</h2>
+        <p>We are happy to design your holidays as per your convenience &amp; comfort. Get in touch to design your dream Holiday.</p>
+        <p><strong>Mobile:</strong> {{ site_phone_secondary }} / {{ site_phone_primary }}<br>
+        <strong>Email:</strong> <a href="mailto:{{ site_email }}">{{ site_email }}</a></p>
+      </div>
+      {% if similar %}
+        <h2>Similar Tours</h2>
+        <ul>
+          {% for t in similar %}
+            <li><a href="{{ t.get_absolute_url }}">{{ t.title }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </aside>
+  </div>
+</div>
+{% endblock %}

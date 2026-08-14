@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Travellers Harmony :: {% block title %}Home{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body>
+  <header class="header">
+    <div class="wrap header-inner">
+      <a class="logo" href="{% url 'tours:home' %}">
+        <img src="{% static 'img/logo.jpg' %}" alt="Travellers Harmony">
+      </a>
+      <div class="header-right">
+        <div class="header-meta">
+          <div class="call-us">{{ site_phone_primary }}</div>
+          <div class="social">
+            <a href="{{ facebook_url }}" target="_blank" rel="noopener">Facebook</a>
+            <a href="{{ instagram_url }}" target="_blank" rel="noopener">Instagram</a>
+          </div>
+        </div>
+        <nav class="nav" id="main-nav">
+          <a href="{% url 'tours:home' %}">Home</a>
+          <a href="{% url 'tours:about' %}">About Us</a>
+          <div class="has-sub">
+            <button type="button">Group Tours</button>
+            <div class="sub">
+              {% for c in nav_categories.group %}
+              <a href="{{ c.get_absolute_url }}"><span>-</span> {{ c.name }}</a>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="has-sub">
+            <button type="button">Individual Tours</button>
+            <div class="sub">
+              {% for c in nav_categories.individual %}
+              <a href="{{ c.get_absolute_url }}"><span>-</span> {{ c.name }}</a>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="has-sub">
+            <button type="button">Specialised Tours</button>
+            <div class="sub">
+              {% for c in nav_categories.specialised %}
+              <a href="{{ c.get_absolute_url }}"><span>-</span> {{ c.name }}</a>
+              {% endfor %}
+            </div>
+          </div>
+          <a href="{% url 'tours:contact' %}">Contact</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    {% if messages %}
+      <div class="wrap messages">
+        {% for message in messages %}
+          <p class="flash">{{ message }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-grid">
+      <div>
+        <h2>Travellers Harmony Tours</h2>
+        <p>We are helping you to create your memories. We serve you to enjoy your holidays with your family or friends and refresh yourself. We are serving various travel related services like Group Tours, Individual Tours, Off-beat Tours, Theme-based Tours, Adventure Tours, Educational and Industrial Tours for College and School Students, Air Tickets, VISA Service, Travel Insurance, MICE, Corporate Travel Solutions etc.</p>
+        <p><a href="{% url 'tours:about' %}">Read More</a></p>
+      </div>
+      <div>
+        <h2>More</h2>
+        <ul>
+          <li><a href="{% url 'tours:home' %}">Home</a></li>
+          <li><a href="{% url 'tours:contact' %}">Contact</a></li>
+          <li><a href="{% url 'tours:educational' %}">Educational Tours</a></li>
+          <li><a href="{% url 'tours:inspirational' %}">Inspirational Tourism</a></li>
+          <li><a href="/admin/">Admin</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="wrap">
+        © {% now "Y" %} Travellers Harmony.
+      </div>
+    </div>
+  </footer>
+  <script>
+    document.querySelectorAll('.has-sub > button').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        btn.parentElement.classList.toggle('open');
+      });
+    });
+  </script>
+</body>
+</html>

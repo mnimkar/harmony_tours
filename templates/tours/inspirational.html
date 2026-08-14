@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Inspirational Tourism{% endblock %}
+{% block content %}
+<div class="page wrap">
+  <p class="crumb"><a href="{% url 'tours:home' %}">Home</a> / Inspirational Tourism</p>
+  <h1>Inspirational Tourism</h1>
+  <table class="info-table">
+    <thead><tr><th>Sr. No</th><th>Place</th><th>Duration</th></tr></thead>
+    <tbody>
+      <tr><td>01</td><td>Anandwan, Hemalkasa, Somnath, Tadoba</td><td>04 nights - 05 days by Train</td></tr>
+      <tr><td>02</td><td>Ralegan, Hirawe Bazar, Snehalay, Sawali, Vigyan Ashram</td><td>01 night – 02 days by Bus</td></tr>
+      <tr><td>03</td><td>Gandhi Teerth (Jalgaon), Ajanta Caves, Aryan Eco Resort, Manobal</td><td>02 nights – 03 days by Bus</td></tr>
+      <tr><td>04</td><td>Barefoot College, Jaipur Foot, Jaipur City</td><td>03 nights – 04 days by Train</td></tr>
+      <tr><td>05</td><td>Melghat, Chikhaldhara</td><td>02 nights - 03 days by Train</td></tr>
+      <tr><td>06</td><td>NDA Visit</td><td>1 day by Bus</td></tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}
