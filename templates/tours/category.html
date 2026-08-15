@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ category.name }}{% endblock %}
+{% block content %}
+<div class="page wrap category-page">
+  <p class="crumb"><a href="{% url 'tours:home' %}">Home</a> / {{ category.get_kind_display }}</p>
+  <h1>{{ category.name }}</h1>
+  <div class="category-layout">
+    <div class="tour-grid">
+      {% for tour in tours %}
+        <article class="tour-card">
+          <a href="{{ tour.get_absolute_url }}">
+            {% if tour.image %}
+              <img src="{{ tour.image.url }}" alt="{{ tour.title }}">
+            {% else %}
+              <div class="placeholder">{{ tour.title|truncatechars:18 }}</div>
+            {% endif %}
+            <h3>{{ tour.title }}</h3>
+          </a>
+        </article>
+      {% empty %}
+        <p>No tours in this category yet. Add them from the admin.</p>
+      {% endfor %}
+    </div>
+    <aside>
+      <h2>{{ category.get_kind_display }}</h2>
+      <ul>
+        {% for s in siblings %}
+          <li {% if s.pk == category.pk %}class="current"{% endif %}><a href="{{ s.get_absolute_url }}">{{ s.name }}</a></li>
+        {% endfor %}
+      </ul>
+      {% if destinations %}
+        <h2>Tours</h2>
+        <ul>
+          {% for d in destinations %}
+            <li>{{ d }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </aside>
+  </div>
+</div>
+{% endblock %}

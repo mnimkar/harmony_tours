@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Contact{% endblock %}
+{% block content %}
+<div class="page wrap contact-page">
+  <p class="crumb"><a href="{% url 'tours:home' %}">Home</a> / Contact</p>
+  <h1>Get in Touch</h1>
+  <div class="contact-grid">
+    <div>
+      <h2>Travellers Harmony</h2>
+      <p>{{ site_address|linebreaksbr }}</p>
+      <h2>Call Us</h2>
+      <p><strong>Kaustubh Joshi</strong><br>
+      Mobile Number : {{ site_phone_secondary }}<br>
+      Mobile Number : {{ site_phone_primary }}</p>
+      <h2>Email Us</h2>
+      <p>Email: <a href="mailto:{{ site_email }}">{{ site_email }}</a></p>
+    </div>
+    <form method="post" class="enquiry-form">
+      {% csrf_token %}
+      {{ form.name }}
+      {{ form.email }}
+      {{ form.mobile }}
+      {{ form.message }}
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
