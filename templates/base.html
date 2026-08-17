@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Travellers Harmony :: {% block title %}Home{% endblock %}</title>
+  <title>Harmony Tours :: {% block title %}Home{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   {% load static %}
@@ -13,7 +13,7 @@
   <header class="header">
     <div class="wrap header-inner">
       <a class="logo" href="{% url 'tours:home' %}">
-        <img src="{% static 'img/logo.jpg' %}" alt="Travellers Harmony">
+        <img src="{% static 'img/logo.jpg' %}" alt="Harmony Tours">
       </a>
       <div class="header-right">
         <div class="header-meta">
@@ -70,7 +70,7 @@
   <footer class="footer">
     <div class="wrap footer-grid">
       <div>
-        <h2>Travellers Harmony Tours</h2>
+        <h2>Harmony Tours</h2>
         <p>We are helping you to create your memories. We serve you to enjoy your holidays with your family or friends and refresh yourself. We are serving various travel related services like Group Tours, Individual Tours, Off-beat Tours, Theme-based Tours, Adventure Tours, Educational and Industrial Tours for College and School Students, Air Tickets, VISA Service, Travel Insurance, MICE, Corporate Travel Solutions etc.</p>
         <p><a href="{% url 'tours:about' %}">Read More</a></p>
       </div>
@@ -87,7 +87,7 @@
     </div>
     <div class="footer-bottom">
       <div class="wrap">
-        © {% now "Y" %} Travellers Harmony.
+        © {% now "Y" %} Harmony Tours.
       </div>
     </div>
   </footer>

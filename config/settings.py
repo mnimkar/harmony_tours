@@ -80,7 +80,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-SITE_NAME = "Travellers Harmony"
+SITE_NAME = "Harmony Tours"
 SITE_PHONE_PRIMARY = "+91 99877 25131"
 SITE_PHONE_SECONDARY = "+91 98206 92614"
 SITE_EMAIL = "travellersharmonyllp@gmail.com"

@@ -35,7 +35,7 @@ class SiteTests(TestCase):
     def test_home_page(self):
         response = self.client.get(reverse("tours:home"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Travellers Harmony")
+        self.assertContains(response, "Harmony Tours")
         self.assertContains(response, "Statue Of Unity")
 
     def test_category_and_detail(self):

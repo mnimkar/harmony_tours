@@ -1,6 +1,6 @@
-# Travellers Harmony (Django)
+# Harmony Tours (Django)
 
-Django rebuild of [travellersharmony.com](https://travellersharmony.com/Home) with an admin section to add tours and departure dates.
+Django build of [harmonytours.in](https://travellersharmony.com/Home) with an admin section to add tours and departure dates.
 
 ## Run locally
 
