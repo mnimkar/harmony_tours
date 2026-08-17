@@ -35,3 +35,14 @@ You can also add dates from **Tour dates** as a standalone list.
 - Educational Tours and Inspirational Tourism
 
 Enquiries submitted on contact or tour pages appear under **Enquiries** in admin.
+
+## Admin: invoices
+
+Branch `invoice` adds billing in Django admin.
+
+1. Open **Invoices** → Add invoice (customer, tour, optional tour date / enquiry).
+2. Add line items (description, quantity, unit price). Subtotal, GST (default 5%) and total are calculated automatically.
+3. Invoice numbers are assigned as `HT-YYYY-0001`.
+4. Use **Print** on the invoice list (or `/invoices/<id>/`) for a printable page. Staff login is required.
+5. From **Enquiries**, select rows and run **Create invoice from selected enquiries**.
+

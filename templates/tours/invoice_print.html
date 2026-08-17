@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Invoice {{ invoice.number }}</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body class="invoice-print">
+  <div class="invoice-sheet">
+    <header class="invoice-head">
+      <div>
+        <img src="{% static 'img/logo.jpg' %}" alt="{{ site_name }}" class="invoice-logo">
+        <h1>{{ site_name }}</h1>
+        <p>{{ site_address|linebreaksbr }}<br>
+        {{ site_phone_secondary }} / {{ site_phone_primary }}<br>
+        {{ site_email }}</p>
+      </div>
+      <div class="invoice-meta">
+        <h2>INVOICE</h2>
+        <p><strong>No.</strong> {{ invoice.number }}<br>
+        <strong>Date</strong> {{ invoice.issue_date|date:"d M Y" }}<br>
+        <strong>Status</strong> {{ invoice.get_status_display }}
+        {% if invoice.due_date %}<br><strong>Due</strong> {{ invoice.due_date|date:"d M Y" }}{% endif %}
+        {% if invoice.paid_date %}<br><strong>Paid</strong> {{ invoice.paid_date|date:"d M Y" }}{% endif %}
+        </p>
+      </div>
+    </header>
+
+    <section class="invoice-parties">
+      <div>
+        <h3>Bill to</h3>
+        <p>
+          <strong>{{ invoice.customer_name }}</strong><br>
+          {% if invoice.customer_address %}{{ invoice.customer_address|linebreaksbr }}<br>{% endif %}
+          {% if invoice.customer_city %}{{ invoice.customer_city }}<br>{% endif %}
+          {% if invoice.customer_mobile %}{{ invoice.customer_mobile }}<br>{% endif %}
+          {% if invoice.customer_email %}{{ invoice.customer_email }}<br>{% endif %}
+          {% if invoice.customer_gstin %}GSTIN: {{ invoice.customer_gstin }}{% endif %}
+        </p>
+      </div>
+      <div>
+        <h3>Tour</h3>
+        <p>
+          {% if invoice.tour %}<strong>{{ invoice.tour.title }}</strong><br>{% endif %}
+          {% if invoice.tour_date %}Departure: {{ invoice.tour_date.start_date|date:"d M Y" }}{% if invoice.tour_date.end_date %} – {{ invoice.tour_date.end_date|date:"d M Y" }}{% endif %}<br>{% endif %}
+          {% if invoice.enquiry %}Enquiry: {{ invoice.enquiry }}{% endif %}
+        </p>
+      </div>
+    </section>
+
+    <table class="invoice-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Qty</th>
+          <th>Unit price</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for line in invoice.lines.all %}
+          <tr>
+            <td>{{ line.description }}</td>
+            <td>{{ line.quantity }}</td>
+            <td>₹ {{ line.unit_price }}</td>
+            <td>₹ {{ line.amount }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">No line items</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <table class="invoice-totals">
+      <tr><th>Subtotal</th><td>₹ {{ invoice.subtotal }}</td></tr>
+      <tr><th>GST ({{ invoice.gst_percent }}%)</th><td>₹ {{ invoice.gst_amount }}</td></tr>
+      <tr class="grand"><th>Total</th><td>₹ {{ invoice.total }}</td></tr>
+    </table>
+
+    {% if invoice.notes %}
+      <p class="invoice-notes"><strong>Notes:</strong> {{ invoice.notes|linebreaksbr }}</p>
+    {% endif %}
+
+    <p class="invoice-thanks">Thank you for travelling with {{ site_name }}.</p>
+    <p class="no-print"><button type="button" onclick="window.print()">Print</button>
+      <a href="{% url 'admin:tours_invoice_change' invoice.pk %}">Back to admin</a></p>
+  </div>
+</body>
+</html>

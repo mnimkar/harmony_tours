@@ -17,4 +17,5 @@ urlpatterns = [
         views.tour_detail,
         name="detail",
     ),
+    path("invoices/<int:pk>/", views.invoice_print, name="invoice_print"),
 ]
