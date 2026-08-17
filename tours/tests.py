@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from datetime import date, timedelta
 
-from tours.models import Category, Enquiry, Tour, TourDate
+from tours.models import Category, Enquiry, Invoice, InvoiceLine, Tour, TourDate
 
 
 class SiteTests(TestCase):
@@ -73,3 +73,55 @@ class SiteTests(TestCase):
         add_resp = self.client.get(reverse("admin:tours_tour_add"))
         self.assertEqual(add_resp.status_code, 200)
         self.assertContains(add_resp, "start_date")
+
+
+class InvoiceTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.cat = Category.objects.create(
+            name="Domestic Tours",
+            slug="group-domestic",
+            kind=Category.KIND_GROUP,
+        )
+        cls.tour = Tour.objects.create(
+            category=cls.cat,
+            title="Statue Of Unity (2N)",
+            slug="statue-of-unity-2n",
+            is_published=True,
+        )
+        cls.user = get_user_model().objects.create_superuser(
+            "admin", "a@example.com", "pass12345"
+        )
+
+    def test_invoice_number_and_gst_totals(self):
+        invoice = Invoice.objects.create(
+            customer_name="Test Guest",
+            tour=self.tour,
+            gst_percent="5.00",
+        )
+        self.assertTrue(invoice.number.startswith("HT-"))
+        InvoiceLine.objects.create(
+            invoice=invoice,
+            description="Package — 2 adults",
+            quantity=2,
+            unit_price="10000.00",
+        )
+        invoice.refresh_from_db()
+        self.assertEqual(str(invoice.subtotal), "20000.00")
+        self.assertEqual(str(invoice.gst_amount), "1000.00")
+        self.assertEqual(str(invoice.total), "21000.00")
+
+    def test_print_requires_staff(self):
+        invoice = Invoice.objects.create(customer_name="Guest")
+        url = reverse("tours:invoice_print", args=[invoice.pk])
+        self.assertEqual(self.client.get(url).status_code, 302)
+        self.client.login(username="admin", password="pass12345")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, invoice.number)
+
+    def test_admin_invoice_form(self):
+        self.client.login(username="admin", password="pass12345")
+        response = self.client.get(reverse("admin:tours_invoice_add"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Invoice lines")

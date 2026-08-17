@@ -1,7 +1,11 @@
-from django.contrib import admin
+from decimal import Decimal
+
+from django.contrib import admin, messages
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.html import format_html
 
-from .models import Banner, Category, Enquiry, Tour, TourDate
+from .models import Banner, Category, Enquiry, Invoice, InvoiceLine, Tour, TourDate
 
 
 class TourDateInline(admin.TabularInline):
@@ -136,3 +140,111 @@ class EnquiryAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         return False
+
+    actions = ["create_invoice"]
+
+    @admin.action(description="Create invoice from selected enquiries")
+    def create_invoice(self, request, queryset):
+        created = 0
+        for enquiry in queryset:
+            invoice = Invoice.objects.create(
+                enquiry=enquiry,
+                tour=enquiry.tour,
+                customer_name=enquiry.name,
+                customer_email=enquiry.email,
+                customer_mobile=enquiry.mobile,
+                customer_city=enquiry.city,
+                notes=enquiry.message,
+            )
+            qty = enquiry.adults or 1
+            unit = Decimal("0.00")
+            description = enquiry.tour.title if enquiry.tour else "Tour package"
+            if enquiry.tour:
+                priced = enquiry.tour.dates.filter(price__isnull=False).order_by("start_date").first()
+                if priced and priced.price:
+                    unit = priced.price
+            InvoiceLine.objects.create(
+                invoice=invoice,
+                description=description,
+                quantity=qty,
+                unit_price=unit,
+            )
+            created += 1
+        self.message_user(
+            request,
+            f"Created {created} invoice(s). Open Invoices to add line items and print.",
+            messages.SUCCESS,
+        )
+
+
+class InvoiceLineInline(admin.TabularInline):
+    model = InvoiceLine
+    extra = 1
+    fields = ("description", "quantity", "unit_price")
+
+
+@admin.register(Invoice)
+class InvoiceAdmin(admin.ModelAdmin):
+    list_display = (
+        "number",
+        "customer_name",
+        "tour",
+        "issue_date",
+        "status",
+        "total",
+        "print_link",
+    )
+    list_filter = ("status", "issue_date")
+    search_fields = ("number", "customer_name", "customer_email", "customer_mobile")
+    autocomplete_fields = ("tour", "tour_date", "enquiry")
+    readonly_fields = ("number", "subtotal", "gst_amount", "total", "created_at", "updated_at")
+    inlines = [InvoiceLineInline]
+    date_hierarchy = "issue_date"
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "number",
+                    "status",
+                    "issue_date",
+                    "due_date",
+                    "paid_date",
+                    "tour",
+                    "tour_date",
+                    "enquiry",
+                )
+            },
+        ),
+        (
+            "Bill to",
+            {
+                "fields": (
+                    "customer_name",
+                    "customer_email",
+                    "customer_mobile",
+                    "customer_city",
+                    "customer_address",
+                    "customer_gstin",
+                )
+            },
+        ),
+        (
+            "Totals",
+            {"fields": ("gst_percent", "subtotal", "gst_amount", "total", "notes")},
+        ),
+        ("Timestamps", {"fields": ("created_at", "updated_at"), "classes": ("collapse",)}),
+    )
+
+    def print_link(self, obj):
+        if not obj.pk:
+            return "—"
+        url = reverse("tours:invoice_print", args=[obj.pk])
+        return format_html('<a href="{}" target="_blank">Print</a>', url)
+
+    print_link.short_description = "Invoice"
+
+    def response_change(self, request, obj):
+        if "_print" in request.POST:
+            return redirect(obj.get_absolute_url())
+        return super().response_change(request, obj)

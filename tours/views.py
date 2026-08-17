@@ -1,9 +1,10 @@
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
 from .forms import EnquiryForm
-from .models import Banner, Category, Tour
+from .models import Banner, Category, Invoice, Tour
 
 
 def home(request):
@@ -101,3 +102,12 @@ def tour_detail(request, category_slug, tour_slug):
             "dates": tour.all_active_dates(),
         },
     )
+
+
+@staff_member_required
+def invoice_print(request, pk):
+    invoice = get_object_or_404(
+        Invoice.objects.select_related("tour", "tour_date", "enquiry").prefetch_related("lines"),
+        pk=pk,
+    )
+    return render(request, "tours/invoice_print.html", {"invoice": invoice})
